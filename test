@@ -1,0 +1,184 @@
+<!--<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>スッキリ株式会社 [採用情報]</title>
+<!------------------------------------------------------------------------------------------------------------->
+<style>
+html {
+    font-size: 1vw;
+}
+body {
+  background: radial-gradient(
+    circle 1000px at center,
+    /*#57f6fe 0%,
+    #30c7ec 50%,
+    #46aef7 100%*/
+    #1c92d0 0%,
+    /*#30c7ec 50%,*/
+    #0c0df6 100%
+  );
+}
+.tx1 {
+    position: absolute;
+    color: #e0e0e0;
+    top: 0.8rem;
+    left: 38.5rem;
+  font-size: 5rem;
+  text-shadow:6px 6px 4px #001e43;
+  animation: slideIn 4s cubic-bezier(0.25, 0.7, 0.5, 1) 1 forwards;
+}@keyframes slideIn {
+  0% {
+    transform: translateX(120rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+  }
+  40%,100% {
+    opacity: 1;
+  }
+}
+#tx2{
+    color: #ff8c00;
+    font-weight: bold;
+    text-shadow:6px 6px 4px #001e43;
+    font-size: 2rem;
+    position: absolute;
+    top: 7rem;
+    left: 44.5rem;
+  z-index: 1;
+  animation: slideIn2 5s cubic-bezier(0.5, 1, 0.5, 1) 1 forwards;
+}@keyframes slideIn2 {
+  0% {
+    transform: translateX(-150rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+  }
+  40%,100% {
+    opacity: 1;
+  }
+}
+table{
+   
+   border-collapse: collapse;
+}
+
+#td1 {
+    position: absolute;
+    top: 10rem;
+    z-index: 3;
+    max-width: 98%;
+    left: 1%;
+    animation: slideIn2 5s cubic-bezier(0.5, 1, 0.5, 1) 1 forwards;
+}
+
+th {
+    border: 3px solid #000000;
+    font-size: 180%;
+    width: 10000px;
+  
+    background-image: linear-gradient(to right, #92fe9d 0%, #00c9ff 100%);
+   
+}
+
+th:hover {
+    opacity: 0.5;
+}
+.dwlink {
+    position: absolute;
+    left: 6rem;
+    top: 17rem;
+    border: solid 0.5rem;
+    border-radius: 0.5rem;
+    border-image: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);
+    border-image-slice: 1; 
+    max-height: 35rem;
+   
+}.oubo {
+    height: 35rem;
+}
+.bosyuuyoukou {
+  position: absolute;
+  width: auto;
+  left: 40rem;
+  top: 18rem;
+  text-align: justify;
+  font-size: 1.1rem;
+  max-height: 35rem;
+}
+.drtx {
+animation-name: txani;
+animation-duration: 4s;
+animation-iteration-count: infinite;
+position: absolute;
+left: 10.5rem;
+top: 15rem;
+font-size: 1.3rem;
+}
+@keyframes txani {
+  0%{
+        color: #000000;
+    }
+    
+    100%{
+        color: #ffffff;
+    }
+}
+</style>
+
+
+
+</head>
+
+<body>
+    <div class="tx1">採用情報</div>
+    <div id="tx2">メニュー</div>
+ 
+    <table id="td1">
+      
+      <tr>
+         
+              <th><a href="">企業情報</a></th>
+              <th><a href="">事業紹介</a></th>
+              <th><a href="">社長の言葉</a></th>
+              <th><a href="">トップ</a></th>
+          
+      </tr>
+      
+      </table>
+
+<diV class="dwlink">
+<a href="応募用紙.pdf" download="応募用紙.pdf"><img src="応募用紙.png" class="oubo"></a>
+</diV>
+<div class="bosyuuyoukou">
+  ・募集職種：遺伝子工学研究員、バイオエンジニア、生物学研究員、クローン製造技術者、品質管理担当者など<br>
+・応募資格：遺伝子工学や生物学の専門知識や実務経験がある方、クローン製造技術に興味を持ち、<br>熱意を持って取り組める方<br>
+・給与：経験・能力に応じて優遇<br>
+・待遇：社会保険完備、昇給・賞与あり、社員旅行など各種イベントあり<br>
+・応募方法：履歴書・職務経歴書を送付し、書類選考の上、面接日時等についてご連絡いたします。<br>
+・勤務地：東京都港区六本木1-1-1<br>
+・採用人数：数名から数十名程度<br>
+・就業時間：フレックスタイム制<br>
+・休日・休暇：土日祝日、年末年始、夏季休暇、有給休暇、慶弔休暇など<br>
+・教育研修：入社後に研修制度あり<br>
+・キャリアアップ：キャリアアップ制度あり<br>
+・社風：若手が活躍できるフラットな組織で、社員同士が協力し合って成長できる風土<br>
+・採用プロセス：書類選考、1次面接、2次面接、最終面接の順で行われます<br>
+・福利厚生：社宅制度、財形貯蓄制度、退職金制度、育児休暇制度、介護休業制度、スポーツクラブ利用補助制度、<br>
+健康診断、インフルエンザ予防接種、社員割引制度など<br>
+・社会的責任：クローン技術における倫理的なガイドラインを厳格に守り、<br>
+社会的責任を果たす企業として、地域社会に貢献しています。<br>
+・その他：応募者には、面接前に事前説明会を実施する場合があります。<br>
+</div>
+<div class="drtx">
+  ↓ダウンロードはこちらから↓
+</div>
+
+
+</body>
+</html>
