@@ -1,10 +1,4 @@
 # procon-share
-<style>
- 
-
-
-
-
 It is shere repository<br>
 初音ミクプログラミングコンテストの共有用リポジトリです<br>
 <div id='img'><b>募集ポスター</b><br>
