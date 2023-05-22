@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+   
+    <!-- <title>Document</title> -->
+    <style>
+        /* 背景 / Background */
+body {
+  background: #c33c68;
+  background-image: linear-gradient(
+    0deg,
+    #c33c68 0,
+    #bf6096 30%,
+    #266da2 60%,
+    #76dddb 100%
+  );
+  background-attachment: fixed;
+  background-size: 100vw 100vh;
+}
+
+/* オーバーレイ / Overlay */
+#overlay {
+  user-select: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  background: #0006;
+  color: #fffc;
+  z-index: 5;
+}
+#overlay.disabled {
+  display: none;
+}
+#overlay > p {
+  width: 100vw;
+  font-size: 40px;
+  text-align: center;
+}
+#overlay > p > span {
+  display: inline-block;
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid #fff6;
+}
+
+/* フッターと音源 / Header and audio source */
+#header,
+#media {
+  /* ページ左に固定 / Stick to the page left */
+  position: fixed;
+  left: 0;
+
+  /* 背景色と文字色 / Background and text color */
+  background: #000c;
+  color: #fff;
+
+  z-index: 1;
+}
+
+/* フッター / Footer */
+#header {
+  /* 上寄せ / Top-aligned */
+  top: 20px;
+
+  /* 少し余裕を持たせる / Box with a small padding */
+  padding: 10px 16px;
+
+  /* フォントサイズ小さめ、太め / Small but bold typography */
+  font-size: 10.5px;
+  font-weight: bold;
+
+  /* 子要素を横に並べて配置 / Align child content to the right */
+  display: flex;
+
+  /* 子要素は縦に中央揃え / Vertically middle-aligned */
+  align-items: center;
+}
+
+/* 再生ボタン / Play button */
+#control {
+  font-size: 21px;
+  padding-right: 10px;
+  border-right: 1px solid #fff9;
+}
+#control.disabled {
+  display: none;
+}
+#control a {
+  color: rgb(99 208 226);
+  text-decoration: none;
+}
+#control a.disabled {
+  opacity: 0.3;
+}
+#control a:hover {
+  color: rgb(255 148 56);
+}
+
+/* アーティストと楽曲の情報 / Artist and song info */
+#meta {
+  padding-left: 10px;
+}
+#meta span {
+  font-weight: normal;
+}
+
+/* 音源 / Audio source */
+#media {
+  /* 下寄せ / Bottom-aligned */
+  bottom: 10px;
+}
+#media.disabled > .textalive-media-wrapper {
+  width: 0;
+  height: 0;
+}
+
+/**
+ * ビート情報が取れるようになったらビートバーを表示
+ * Show beat bar when beat information becomes available
+ */
+@keyframes activateBeatBar {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/**
+ * ビート毎に右に広げてフェードアウト
+ * Make beat bar span to the right and then fade out
+ */
+@keyframes showBeatBar {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  50% {
+    width: 100%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+/**
+ * 歌詞が下からせり出してくる
+ * Make lyrics text appear from the bottom
+ */
+@keyframes showLyrics {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* ビートバー / Beat bar */
+#bar {
+  opacity: 0;
+  height: 3px;
+  background: rgb(255 222 193);
+}
+#bar.active {
+  animation: activateBeatBar 0.3s;
+}
+#bar.beat {
+  animation: showBeatBar 0.5s;
+}
+
+/* 歌詞 / Lyrics */
+#lyrics {
+  z-index: 0;
+  padding: 3em 0 5em 0;
+  line-height: 2em;
+  font-size: 36px;
+  font-family: "Shippori Mincho B1", serif;
+  color: #fddaff;
+  text-shadow: 2px 2px 3px #e4215a;
+  user-select: none;
+  cursor: pointer;
+
+  /* 歌詞をちょっと回転させる / Rotate text */
+  transform: rotateX(10deg) rotateY(-10deg);
+}
+#text > div {
+  /* 文字ごとに改行しない / No line-break per char */
+  display: inline-block;
+  /* 溢れた部分を隠す / Hide overflow content */
+  /* overflow: hidden; */
+  /* 高さ指定で文字をあえて溢れさす / Make text overflow with height specified */
+  /* height: 45px; */
+}
+#text > div > div {
+  animation: showLyrics 0.5s;
+}
+
+/**
+ * 名詞などを強調表示する
+ * Emphasize nouns
+ */
+#text .noun {
+  color: #ddf9ff;
+  font-size: 40px;
+}
+
+/**
+ * フレーズ終わりで右にマージンを空けて読みやすくする
+ * Add right margin to the last char in phrases
+ */
+#text .lastChar {
+  margin-right: 40px;
+}
+
+#text .firstCharInEnglishWord {
+  margin-left: 20px;
+}
+
+#text .lastCharInEnglishWord {
+  margin-right: 20px;
+}
+
+#text .lastCharInEnglishWord + .firstCharInEnglishWord {
+  margin-left: 0;
+}
+
+#seekbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: rgba(255 255 255 / 40%);
+}
+
+#seekbar > div {
+  width: 0;
+  height: 100%;
+  background: rgba(255 255 255 / 80%);
+}
+
+    </style>
+</head>
+<body>
+    <!-- オーバーレイ / Overlay -->
+<div id="overlay">
+    <p><span class="far">&#xf254;</span>now loading...</p>
+  </div>
+  
+  <!-- ヘッダ / Header -->
+  <div id="header">
+    <!-- 再生コントロール / Playback control -->
+    <div id="control" class="far">
+      <a href="#" id="play" class="disabled">&#xf144;</a>
+      <a href="#" id="stop" class="disabled">&#xf28d;</a>
+    </div>
+    <!-- アーティストと楽曲の情報 / Artist and song info -->
+    <div id="meta">
+      <div id="artist">artist: <span>-</span></div>
+      <div id="song">song: <span>-</span></div>
+    </div>
+  </div>
+  
+  <!-- 音源 / Audio souce -->
+  <div id="media"></div>
+  
+  <!-- 歌詞 / Lyrics text -->
+  <div id="lyrics">
+    <!-- 文字 / Text -->
+    <div id="text"></div>
+    <!-- ビートバー / Beat bar -->
+    <div id="bar"></div>
+  </div>
+  
+  <!-- シークバー -->
+  <div id="seekbar">
+    <div></div>
+  </div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
+  <script>
+    // npm install textalive-app-api
+    const { Player, stringToDataUrl } = TextAliveApp;
+    // import { Player,stringToDataUrl } from "textalive-app-api";
+
+// TextAlive Player を初期化
+const player = new Player({
+  // トークンは https://developer.textalive.jp/profile で取得したものを使う
+  app: { token: "EuEQABigrbuJn4qB" },
+  mediaElement: document.querySelector("#media"),
+  mediaBannerPosition: "bottom right"
+
+  // オプション一覧
+  // https://developer.textalive.jp/packages/textalive-app-api/interfaces/playeroptions.html
+});
+
+const overlay = document.querySelector("#overlay");
+const bar = document.querySelector("#bar");
+const textContainer = document.querySelector("#text");
+const seekbar = document.querySelector("#seekbar");
+const paintedSeekbar = seekbar.querySelector("div");
+let b, c;
+
+player.addListener({
+  /* APIの準備ができたら呼ばれる */
+  onAppReady(app) {
+    if (app.managed) {
+      document.querySelector("#control").className = "disabled";
+    }
+    if (!app.songUrl) {
+      document.querySelector("#media").className = "disabled";
+
+     
+      // https://developer.textalive.jp/events/magicalmirai2023/#snippets
+      player.createFromSongUrl("https://piapro.jp/t/Wk83/20230203141007", {
+        video: {
+        /*beatId: 4267297,
+          chordId: 2405019,
+          repetitiveSegmentId: 2405019,
+          lyricId: 56092,
+          lyricDiffId: 9636*/
+         beatId: 4267381,
+          chordId: 2405285,
+           repetitiveSegmentId: 2475676,
+           lyricId: 56097,
+          lyricDiffId: 9640
+        }
+      });
+    }
+  },
+
+  /* 楽曲が変わったら呼ばれる */
+  onAppMediaChange() {
+    // 画面表示をリセット
+    overlay.className = "";
+    bar.className = "";
+    resetChars();
+  },
+
+  /* 楽曲情報が取れたら呼ばれる */
+  onVideoReady(video) {
+    // 楽曲情報を表示
+    document.querySelector("#artist span").textContent =
+      player.data.song.artist.name;
+    document.querySelector("#song span").textContent = player.data.song.name;
+
+    // 最後に表示した文字の情報をリセット
+    c = null;
+  },
+
+  /* 再生コントロールができるようになったら呼ばれる */
+  onTimerReady() {
+    overlay.className = "disabled";
+    document.querySelector("#control > a#play").className = "";
+    document.querySelector("#control > a#stop").className = "";
+  },
+
+  /* 再生位置の情報が更新されたら呼ばれる */
+  onTimeUpdate(position) {
+    // シークバーの表示を更新
+    paintedSeekbar.style.width = `${
+      parseInt((position * 1000) / player.video.duration) / 10
+    }%`;
+
+    // 現在のビート情報を取得
+    let beat = player.findBeat(position);
+    if (b !== beat) {
+      if (beat) {
+        requestAnimationFrame(() => {
+          bar.className = "active";
+          requestAnimationFrame(() => {
+            bar.className = "active beat";
+          });
+        });
+      }
+      b = beat;
+    }
+
+    // 歌詞情報がなければこれで処理を終わる
+    if (!player.video.firstChar) {
+      return;
+    }
+
+    // 巻き戻っていたら歌詞表示をリセットする
+    if (c && c.startTime > position + 1000) {
+      resetChars();
+    }
+
+    // 500ms先に発声される文字を取得
+    let current = c || player.video.firstChar;
+    while (current && current.startTime < position + 500) {
+      // 新しい文字が発声されようとしている
+      if (c !== current) {
+        newChar(current);
+        c = current;
+      }
+      current = current.next;
+    }
+  },
+
+  /* 楽曲の再生が始まったら呼ばれる */
+  onPlay() {
+    const a = document.querySelector("#control > a#play");
+    while (a.firstChild) a.removeChild(a.firstChild);
+    a.appendChild(document.createTextNode("\uf28b"));
+  },
+
+  /* 楽曲の再生が止まったら呼ばれる */
+  onPause() {
+    const a = document.querySelector("#control > a#play");
+    while (a.firstChild) a.removeChild(a.firstChild);
+    a.appendChild(document.createTextNode("\uf144"));
+  }
+});
+
+/* 再生・一時停止ボタン */
+document.querySelector("#control > a#play").addEventListener("click", (e) => {
+  e.preventDefault();
+  if (player) {
+    if (player.isPlaying) {
+      player.requestPause();
+    } else {
+      player.requestPlay();
+    }
+  }
+  return false;
+});
+
+/* 停止ボタン */
+document.querySelector("#control > a#stop").addEventListener("click", (e) => {
+  e.preventDefault();
+  if (player) {
+    player.requestStop();
+
+    // 再生を停止したら画面表示をリセットする
+    bar.className = "";
+    resetChars();
+  }
+  return false;
+});
+
+/* シークバー */
+seekbar.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (player) {
+    player.requestMediaSeek(
+      (player.video.duration * e.offsetX) / seekbar.clientWidth
+    );
+  }
+  return false;
+});
+
+/**
+ * 新しい文字の発声時に呼ばれる
+ * Called when a new character is being vocalized
+ */
+function newChar(current) {
+  // 品詞 (part-of-speech)
+  // https://developer.textalive.jp/packages/textalive-app-api/interfaces/iword.html#pos
+  const classes = [];
+  if (
+    current.parent.pos === "N" ||
+    current.parent.pos === "PN" ||
+    current.parent.pos === "X"
+  ) {
+    classes.push("noun");
+  }
+
+  // フレーズの最後の文字か否か
+  if (current.parent.parent.lastChar === current) {
+    classes.push("lastChar");
+  }
+
+  // 英単語の最初か最後の文字か否か
+  if (current.parent.language === "en") {
+    if (current.parent.lastChar === current) {
+      classes.push("lastCharInEnglishWord");
+    } else if (current.parent.firstChar === current) {
+      classes.push("firstCharInEnglishWord");
+    }
+  }
+
+  // noun, lastChar クラスを必要に応じて追加
+  const div = document.createElement("div");
+  div.appendChild(document.createTextNode(current.text));
+
+  // 文字を画面上に追加
+  const container = document.createElement("div");
+  container.className = classes.join(" ");
+  container.appendChild(div);
+  container.addEventListener("click", () => {
+    player.requestMediaSeek(current.startTime);
+  });
+  textContainer.appendChild(container);
+}
+
+/**
+ * 歌詞表示をリセットする
+ * Reset lyrics view
+ */
+function resetChars() {
+  c = null;
+  while (textContainer.firstChild)
+    textContainer.removeChild(textContainer.firstChild);
+}
+
+  </script>
+</body>
+</html>
